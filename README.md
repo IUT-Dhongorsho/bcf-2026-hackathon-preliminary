@@ -80,9 +80,8 @@ Follow:
 
 Follow:
 
-```
+
 [problem-statement/run-postgres-locally.md](./problem-statement/run-postgres-locally.md)
-```
 
 ---
 
