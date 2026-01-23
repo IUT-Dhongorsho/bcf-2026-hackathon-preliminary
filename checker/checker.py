@@ -35,7 +35,7 @@ def run_tests():
             f"{BASE_URL}/query",
             json={
                 "question": t["question"],
-                "llm": "gpt-4o-mini"
+                "llm": "gemini-2.5-flash"
             },
             timeout=30
         )
