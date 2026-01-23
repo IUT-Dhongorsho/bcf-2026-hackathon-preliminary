@@ -60,6 +60,8 @@ def run_tests():
     print(f"Passed {passed}/{len(tests)} tests")
 
 def main():
+    global BASE_URL
+    
     parser = argparse.ArgumentParser(description="Run checker against a server")
     parser.add_argument(
         "--base-url", "-b",
@@ -68,7 +70,6 @@ def main():
     )
     args = parser.parse_args()
 
-    global BASE_URL
     BASE_URL = args.base_url.rstrip('/')  # normalize trailing slash
 
     try:
