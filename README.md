@@ -302,14 +302,10 @@ If you are confused:
 
 1. Re-read the problem statement
 2. Check example templates
-3. Ask mentors during workshops
-
-We are here to help you learn.
+3. Just use chatGPT
 
 ---
 
 Good luck, and happy hacking!
-
-```
 
 ---
