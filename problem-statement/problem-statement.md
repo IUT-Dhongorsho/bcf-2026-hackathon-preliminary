@@ -309,7 +309,7 @@ So far your system can only answer database related questions but
 >
 > * An [OpenAPI (Swagger) document](./opeapi-specification.yml) describing all allowed external APIs
 > - [Try them in vscode](./load-external-api-spec.md)
-> - [Try them in bruno](../external-apis/)
+> - [Try them in bruno](../external-apis/) <br>
 > During evaluation, only APIs described in the OpenAPI document are allowed.
 
 ### Response Format (IMPORTANT)
