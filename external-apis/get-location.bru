@@ -1,0 +1,144 @@
+meta {
+  name: get-location
+  type: http
+  seq: 3
+}
+
+get {
+  url: https://nominatim.openstreetmap.org/search?q=Denver&format=json
+  body: none
+  auth: inherit
+}
+
+params:query {
+  q: Denver
+  format: json
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+example {
+  name: example
+  
+  request: {
+    url: https://nominatim.openstreetmap.org/search?q=Denver&format=json
+    method: GET
+    mode: none
+    params:query: {
+      q: Denver
+      format: json
+    }
+  }
+  
+  response: {
+    headers: {
+      server: nginx
+      date: Tue, 20 Jan 2026 12:48:38 GMT
+      content-type: application/json; charset=utf-8
+      content-length: 1790
+      connection: keep-alive
+      keep-alive: timeout=20
+      vary: accept-language
+    }
+  
+    status: {
+      code: 200
+      text: OK
+    }
+  
+    body: {
+      type: json
+      content: '''
+        [
+          {
+            "place_id": 390482582,
+            "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+            "osm_type": "relation",
+            "osm_id": 1411339,
+            "lat": "39.7392364",
+            "lon": "-104.9848620",
+            "class": "boundary",
+            "type": "administrative",
+            "place_rank": 12,
+            "importance": 0.6926691729816085,
+            "addresstype": "city",
+            "name": "Denver",
+            "display_name": "Denver, Colorado, United States",
+            "boundingbox": [
+              "39.6143008",
+              "39.9142087",
+              "-105.1098845",
+              "-104.5996997"
+            ]
+          },
+          {
+            "place_id": 346222705,
+            "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+            "osm_type": "relation",
+            "osm_id": 128512,
+            "lat": "42.6713752",
+            "lon": "-92.3372158",
+            "class": "boundary",
+            "type": "administrative",
+            "place_rank": 16,
+            "importance": 0.45881286497844737,
+            "addresstype": "village",
+            "name": "Denver",
+            "display_name": "Denver, Bremer County, Iowa, 50622, United States",
+            "boundingbox": [
+              "42.6567999",
+              "42.6803073",
+              "-92.3471364",
+              "-92.3175410"
+            ]
+          },
+          {
+            "place_id": 323164514,
+            "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+            "osm_type": "relation",
+            "osm_id": 187699,
+            "lat": "40.2331483",
+            "lon": "-76.1371684",
+            "class": "boundary",
+            "type": "administrative",
+            "place_rank": 16,
+            "importance": 0.4093142170089203,
+            "addresstype": "village",
+            "name": "Denver",
+            "display_name": "Denver, Lancaster County, Pennsylvania, United States",
+            "boundingbox": [
+              "40.2211372",
+              "40.2468297",
+              "-76.1586381",
+              "-76.1249030"
+            ]
+          },
+          {
+            "place_id": 343262948,
+            "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+            "osm_type": "relation",
+            "osm_id": 14422279,
+            "lat": "40.8638698",
+            "lon": "-86.0775009",
+            "class": "boundary",
+            "type": "administrative",
+            "place_rank": 16,
+            "importance": 0.3860275900821097,
+            "addresstype": "village",
+            "name": "Denver",
+            "display_name": "Denver, Miami County, Indiana, United States",
+            "boundingbox": [
+              "40.8587000",
+              "40.8692313",
+              "-86.0843217",
+              "-86.0718823"
+            ]
+          }
+        ]
+      '''
+    }
+  }
+}

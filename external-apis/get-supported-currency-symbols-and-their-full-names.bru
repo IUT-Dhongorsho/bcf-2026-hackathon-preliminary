@@ -1,0 +1,87 @@
+meta {
+  name: get-supported-currency-symbols-and-their-full-names
+  type: http
+  seq: 1
+}
+
+get {
+  url: https://api.frankfurter.dev/v1/currencies
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+example {
+  name: example
+  
+  request: {
+    url: https://api.frankfurter.dev/v1/currencies
+    method: GET
+    mode: none
+  }
+  
+  response: {
+    headers: {
+      date: Tue, 20 Jan 2026 12:16:39 GMT
+      content-type: application/json; charset=utf-8
+      transfer-encoding: chunked
+      connection: keep-alive
+      nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+      cache-control: public, max-age=900
+      vary: Origin, accept-encoding
+      report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=LX0cQawDrBwllwL1dod2sodxnbbTHhgIHjMX6zo5ioY0ZF3S6Eh%2BVX5k56JJujkBxnrZbt6IhBXOsjVES3OObWh66qsQMwZSa%2FLYFxC%2F5xZcdvU%3D"}]}
+      cf-cache-status: MISS
+      etag: W/"5e13ddfac5f1f81b4f3e8a276a90dd4c"
+      server: cloudflare
+      cf-ray: 9c0e8116a8b17706-DAC
+      alt-svc: h3=":443"; ma=86400
+    }
+  
+    status: {
+      code: 200
+      text: OK
+    }
+  
+    body: {
+      type: json
+      content: '''
+        {
+          "AUD": "Australian Dollar",
+          "BRL": "Brazilian Real",
+          "CAD": "Canadian Dollar",
+          "CHF": "Swiss Franc",
+          "CNY": "Chinese Renminbi Yuan",
+          "CZK": "Czech Koruna",
+          "DKK": "Danish Krone",
+          "EUR": "Euro",
+          "GBP": "British Pound",
+          "HKD": "Hong Kong Dollar",
+          "HUF": "Hungarian Forint",
+          "IDR": "Indonesian Rupiah",
+          "ILS": "Israeli New Shekel",
+          "INR": "Indian Rupee",
+          "ISK": "Icelandic Króna",
+          "JPY": "Japanese Yen",
+          "KRW": "South Korean Won",
+          "MXN": "Mexican Peso",
+          "MYR": "Malaysian Ringgit",
+          "NOK": "Norwegian Krone",
+          "NZD": "New Zealand Dollar",
+          "PHP": "Philippine Peso",
+          "PLN": "Polish Złoty",
+          "RON": "Romanian Leu",
+          "SEK": "Swedish Krona",
+          "SGD": "Singapore Dollar",
+          "THB": "Thai Baht",
+          "TRY": "Turkish Lira",
+          "USD": "United States Dollar",
+          "ZAR": "South African Rand"
+        }
+      '''
+    }
+  }
+}

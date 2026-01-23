@@ -1,0 +1,18 @@
+version: 1
+
+backend:
+  working_dir: backend
+
+  env:
+    example_file: .env.example
+    output_file: .env
+
+  install:
+    - <commands>
+
+  run:
+    - <commands>
+
+server:
+  base_url: http://localhost:PORT
+  health_endpoint: /health

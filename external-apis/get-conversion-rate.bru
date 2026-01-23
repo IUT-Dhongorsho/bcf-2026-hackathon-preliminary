@@ -1,0 +1,73 @@
+meta {
+  name: get-conversion-rate
+  type: http
+  seq: 2
+}
+
+get {
+  url: https://api.frankfurter.dev/v1/latest?base=EUR&symbols=USD
+  body: none
+  auth: inherit
+}
+
+params:query {
+  base: EUR
+  symbols: USD
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+example {
+  name: example
+  
+  request: {
+    url: https://api.frankfurter.dev/v1/latest?base=EUR&symbols=USD
+    method: GET
+    mode: none
+    params:query: {
+      base: EUR
+      symbols: USD
+    }
+  }
+  
+  response: {
+    headers: {
+      date: Tue, 20 Jan 2026 12:28:01 GMT
+      content-type: application/json; charset=utf-8
+      transfer-encoding: chunked
+      connection: keep-alive
+      nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+      cache-control: public, max-age=900
+      vary: Origin, accept-encoding
+      age: 396
+      report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=89oFizRBCJWjL6cnS%2BU9yx9SFT%2F3%2F1gb2SnWKlaxUqGHPAsXOcYBS8rYKFqTJXIRdew1Vsr8JBw2dArNQ%2FOp1iES3CCrL8Nht1ILX8fz3JoTOkI%3D"}]}
+      cf-cache-status: HIT
+      etag: W/"5e13ddfac5f1f81b4f3e8a276a90dd4c"
+      server: cloudflare
+      cf-ray: 9c0e91bcada87704-DAC
+      alt-svc: h3=":443"; ma=86400
+    }
+  
+    status: {
+      code: 200
+      text: OK
+    }
+  
+    body: {
+      type: json
+      content: '''
+        {
+          "amount": 1,
+          "base": "EUR",
+          "date": "2026-01-19",
+          "rates": {
+            "USD": 1.1631
+          }
+        }
+      '''
+    }
+  }
+}

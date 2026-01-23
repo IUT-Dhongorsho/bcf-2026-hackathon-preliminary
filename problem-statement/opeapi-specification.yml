@@ -1,0 +1,136 @@
+openapi: 3.0.3
+info:
+  title: BUET CSE FEST 2026 – External APIs
+  version: "1.0.0"
+  description: |
+    This document is a direct OpenAPI representation of the external APIs
+    provided to participants in Bruno format.
+
+    During evaluation, only these APIs may be used.
+
+servers:
+  - url: https://api.frankfurter.dev
+    description: Frankfurter currency API
+  - url: https://nominatim.openstreetmap.org
+    description: OpenStreetMap Nominatim API
+
+paths:
+
+  /v1/latest:
+    get:
+      servers:
+        - url: https://api.frankfurter.dev
+      summary: Get currency conversion rate
+      description: |
+        Returns the latest currency conversion rate for a base currency
+        and one or more target currencies.
+      operationId: getConversionRate
+      parameters:
+        - name: base
+          in: query
+          required: true
+          description: Base currency code
+          schema:
+            type: string
+            example: EUR
+        - name: symbols
+          in: query
+          required: true
+          description: Target currency code(s), comma-separated
+          schema:
+            type: string
+            example: USD
+      responses:
+        "200":
+          description: Successful currency conversion response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amount:
+                    type: number
+                    example: 1
+                  base:
+                    type: string
+                    example: EUR
+                  date:
+                    type: string
+                    format: date
+                    example: "2026-01-19"
+                  rates:
+                    type: object
+                    additionalProperties:
+                      type: number
+                    example:
+                      USD: 1.1631
+
+  /v1/currencies:
+    get:
+      servers:
+        - url: https://api.frankfurter.dev
+      summary: Get supported currency symbols and names
+      description: |
+        Returns a mapping of supported currency symbols to their full names.
+      operationId: getSupportedCurrencies
+      responses:
+        "200":
+          description: List of supported currencies
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+                example:
+                  USD: United States Dollar
+                  EUR: Euro
+                  GBP: British Pound Sterling
+                  JPY: Japanese Yen
+                  ZAR: South African Rand
+
+  /search:
+    get:
+      servers:
+        - url: https://nominatim.openstreetmap.org
+      summary: Get location coordinates
+      description: |
+        Returns geographic location data for a given place name.
+      operationId: getLocation
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Location name to search for
+          schema:
+            type: string
+            example: Denver
+        - name: format
+          in: query
+          required: true
+          description: Response format
+          schema:
+            type: string
+            example: json
+      responses:
+        "200":
+          description: Location search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    place_id:
+                      type: integer
+                      example: 123456
+                    display_name:
+                      type: string
+                      example: Denver, Colorado, United States
+                    lat:
+                      type: string
+                      example: "39.7392"
+                    lon:
+                      type: string
+                      example: "-104.9903"
