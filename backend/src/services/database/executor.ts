@@ -39,10 +39,11 @@ export async function getSchema(): Promise<string> {
     const result = await pool.query(query);
     const map: Record<string, string[]> = {};
     for (const row of result.rows) {
-        if (!map[row.table_name]) map[row.table_name] = [];
+        const tableName = String(row.table_name);
+        if (!map[tableName]) map[tableName] = [];
         let col = `  ${row.column_name} ${row.data_type}`;
         if (row.constraints) col += ` (${row.constraints})`;
-        map[row.table_name].push(col);
+        map[tableName].push(col);
     }
 
     let str = '';
