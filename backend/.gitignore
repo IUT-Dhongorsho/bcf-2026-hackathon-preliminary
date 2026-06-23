@@ -1,0 +1,40 @@
+# OS Generated & System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# IDEs & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+*.sublime-workspace
+
+# Dependencies
+node_modules/
+bower_components/
+vendor/
+jspm_packages/
+
+# Build & Logs
+build/
+dist/
+out/
+logs/
+*.log
+*.sqlite
+
+# Environment & Config
+.env
+.env.local
+.env.*.local
+
+# Coverage Reports
+coverage/
+.nyc_output/
