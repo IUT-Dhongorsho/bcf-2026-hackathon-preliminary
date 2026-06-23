@@ -8,7 +8,6 @@ export const executor = async (query: string) => {
         console.error('Error executing query:', error);
     }
 }
-import { pool } from '../../config/database.js';
 
 export async function getSchema(): Promise<string> {
     const query = `
@@ -36,13 +35,13 @@ export async function getSchema(): Promise<string> {
     ORDER BY t.table_name, c.ordinal_position;
   `;
 
-    const result = await pool.query(query);
+    const result = await db.query(query);
     const map: Record<string, string[]> = {};
     for (const row of result.rows) {
         if (!map[row.table_name]) map[row.table_name] = [];
         let col = `  ${row.column_name} ${row.data_type}`;
         if (row.constraints) col += ` (${row.constraints})`;
-        map[row.table_name].push(col);
+        map[row.table_name]!.push(col);
     }
 
     let str = '';
@@ -61,7 +60,7 @@ export async function executeSQL(sql: string): Promise<{ rows: any[]; columns: s
         if (trimmed.includes(word)) throw new Error(`Forbidden keyword: ${word}`);
     }
 
-    const client = await pool.connect();
+    const client = await db.connect();
     try {
         const result = await client.query(sql);
         return { rows: result.rows, columns: result.fields.map(f => f.name) };
