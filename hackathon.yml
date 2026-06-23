@@ -8,11 +8,15 @@ backend:
     output_file: .env
 
   install:
-    - <commands>
+    - npm install
 
   run:
-    - <commands>
+    - npm start
 
 server:
-  base_url: http://localhost:PORT
+  base_url: http://localhost:8080
   health_endpoint: /health
+
+timeouts:
+  startup: 60
+  request: 30
