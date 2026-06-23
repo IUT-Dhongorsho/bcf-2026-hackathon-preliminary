@@ -16,6 +16,11 @@ Instructions:
 - Output ONLY the SQL query, no explanation, no markdown, no backticks.
 - Use column names exactly as shown.
 - Use ONLY SELECT statements.
+- For TEXT or VARCHAR columns, ALWAYS use ILIKE instead of '=' for case-insensitive string matching (e.g. status ILIKE 'paid').
+- For BOOLEAN, NUMERIC, or DATE columns, use standard operators (e.g. is_active = true).
+- ALWAYS prefix column names with their table aliases (e.g., p.product_id) to avoid ambiguous column errors.
+- DO NOT use any tables or columns that are not explicitly listed in the schema.
+- If the question asks to "convert" currencies, IGNORE the currency conversion part and just return the raw database values. The backend handles currency math separately.
 - If the question asks for a total, use SUM() and appropriate JOINs.
 - If the question asks for a single value, return a scalar.
 - If the question asks for one row, use LIMIT 1.

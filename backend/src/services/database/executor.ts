@@ -58,7 +58,8 @@ export async function executeSQL(sql: string): Promise<{ rows: any[]; columns: s
 
     const dangerous = ['DROP', 'DELETE', 'UPDATE', 'INSERT', 'ALTER', 'CREATE', 'TRUNCATE'];
     for (const word of dangerous) {
-        if (trimmed.includes(word)) throw new Error(`Forbidden keyword: ${word}`);
+        const regex = new RegExp(`\\b${word}\\b`);
+        if (regex.test(trimmed)) throw new Error(`Forbidden keyword: ${word}`);
     }
 
     const client = await db.connect();

@@ -3,22 +3,14 @@ import { generateGroqResponse } from './groqClient.js';
 type Intent = 'database' | 'external' | 'mixed';
 
 export async function classifyIntent(question: string): Promise<Intent> {
-  // Quick keyword check first (faster)
-  const lower = question.toLowerCase();
-  if (lower.includes('convert') && (lower.includes('eur') || lower.includes('euro') || lower.includes('gbp') || lower.includes('pound'))) {
-    return 'mixed';
-  }
-  if (lower.includes('convert') || lower.includes('currency') || lower.includes('latitude') || lower.includes('longitude') || lower.includes('weather')) {
-    return 'external';
-  }
-
+  // Rely entirely on the LLM to classify intent, as simple keyword matching is too brittle.
   // If ambiguous, use LLM
   const prompt = `
 Classify the following question into one of three categories:
 
-1. "database" → answer comes purely from the PostgreSQL database (e.g., "total revenue", "top customers").
-2. "external" → answer comes purely from an external API (e.g., currency conversion, geocoding).
-3. "mixed" → answer requires both database and external API (e.g., "convert total revenue to EUR").
+1. "database" → The question asks for internal company data (e.g., invoices, employees, customers, products).
+2. "external" → The question asks for general real-world information like geography (coordinates, latitude, longitude, cities), or general financial data (currency exchange rates, currency names) that has NOTHING to do with the company's internal data.
+3. "mixed" → The question asks for internal company data (invoices, revenue, salaries) BUT asks to "convert" or translate that money into another currency (e.g., "convert total revenue to USD").
 
 Question: "${question}"
 
