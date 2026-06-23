@@ -8,7 +8,7 @@ export async function generateGroqResponse(
   systemPrompt?: string,
   options: { temperature?: number; maxTokens?: number } = {}
 ): Promise<string> {
-  const messages = [];
+  const messages: Array<{ role: string; content: string }> = [];
   if (systemPrompt) {
     messages.push({ role: 'system', content: systemPrompt });
   }
@@ -16,7 +16,7 @@ export async function generateGroqResponse(
 
   const completion = await groq.chat.completions.create({
     model: 'llama-3.3-70b-versatile',
-    messages,
+    messages: messages as any,
     temperature: options.temperature || 0.7,
     max_tokens: options.maxTokens || 1500,
   });
