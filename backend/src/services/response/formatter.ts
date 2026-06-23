@@ -22,7 +22,8 @@ export function formatExternalResponse(
 
   if (api === 'getConversionRate') {
     const symbolKeys = Object.keys(data.rates || {});
-    const rateVal = symbolKeys.length > 0 ? data.rates[symbolKeys[0]] : null;
+    const firstKey = symbolKeys[0];
+    const rateVal = firstKey ? data.rates[firstKey] : null;
     
     result_type = 'scalar';
     columns = ['rate'];
@@ -37,7 +38,7 @@ export function formatExternalResponse(
     } else {
       // Look for symbol in single quotes like 'CHF' or default to CHF
       const match = question.match(/'([^']+)'/);
-      const symbol = match ? match[1].toUpperCase() : 'CHF';
+      const symbol = match?.[1]?.toUpperCase() ?? 'CHF';
       const name = data[symbol] || null;
       
       result_type = 'scalar';
