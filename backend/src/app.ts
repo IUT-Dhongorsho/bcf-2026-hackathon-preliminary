@@ -1,11 +1,11 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import { db } from './database/index'
-import { executor } from './services/database/executor'
+
 dotenv.config()
 
 const app = express()
-const PORT = process.env.PORT || 8080
+const PORT = process.env.PORT || 3000
 
 db.connect().then(() => {
     console.log('Database connection established')
@@ -23,16 +23,6 @@ app.get('/', async (req, res) => {
     }
 })
 
-app.get('/health', async (req, res) => {
-    try {
-        await executor('SELECT 1');
-        res.json({ status: 'ok', database: 'connected' })
-    } catch (error) {
-        console.error('Health check failed:', error)
-        res.status(500).json({ status: 'error', database: 'disconnected' })
-    }
-})
-
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`)
-})  
+  console.log(`Server is running on port ${PORT}`);
+});

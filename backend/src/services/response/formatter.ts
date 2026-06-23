@@ -82,3 +82,59 @@ export function formatExternalResponse(
     }
   };
 }
+
+/**
+ * General-purpose formatter used by queryController for all source types.
+ * Determines result_type from the shape of the rows.
+ */
+export function formatResponse(params: {
+  question: string;
+  llm: string;
+  columns: string[];
+  rows: any[][];
+  source: 'external' | 'database' | 'mixed';
+}): StandardResponse {
+  const { question, llm, columns, rows, source } = params;
+
+  let result_type: 'scalar' | 'record' | 'table';
+  if (rows.length === 1 && columns.length === 1) {
+    result_type = 'scalar';
+  } else if (rows.length === 1) {
+    result_type = 'record';
+  } else {
+    result_type = 'table';
+  }
+
+  // Normalize values: convert numeric strings to numbers, format dates
+  const normalizedRows = rows.map((row: any[]) =>
+    row.map((val: any) => {
+      if (val === null || val === undefined) return null;
+      if (val instanceof Date) {
+        return val.toISOString().split('.')[0] + 'Z';
+      }
+      if (typeof val === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(val)) {
+        return val + 'T00:00:00Z';
+      }
+      if (typeof val === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z$/.test(val)) {
+        return val.split('.')[0] + 'Z';
+      }
+      if (typeof val === 'string' && /^-?\d+(\.\d+)?$/.test(val)) {
+        const num = Number(val);
+        if (!isNaN(num)) return num;
+      }
+      return val;
+    })
+  );
+
+  return {
+    question,
+    llm,
+    result_type,
+    columns,
+    rows: normalizedRows,
+    meta: {
+      row_count: normalizedRows.length,
+      source
+    }
+  };
+}
