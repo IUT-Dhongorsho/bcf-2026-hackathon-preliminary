@@ -1,28 +1,29 @@
-import express from 'express'
-import dotenv from 'dotenv'
-import { db } from './database/index'
+import express from 'express';
+import dotenv from 'dotenv';
+import { pool } from './config/database.js';
+import { handleQuery } from './controllers/queryController.js';
 
-dotenv.config()
+dotenv.config();
 
-const app = express()
-const PORT = process.env.PORT || 3000
+const app = express();
+app.use(express.json());
 
-db.connect().then(() => {
-    console.log('Database connection established')
-}).catch((error) => {
-    console.error('Error connecting to the database:', error)
-})
+const PORT = process.env.PORT || 8080;
 
-app.get('/', async (req, res) => {
-    try {
-        const result = await db.query('SELECT NOW()')
-        res.json({ message: 'Database connected!', time: result.rows[0].now })
-    } catch (error) {
-        console.error('Error connecting to the database:', error)
-        res.status(500).json({ message: 'Database connection error' })
-    }
-})
+// Health check endpoint
+app.get('/health', async (_req, res) => {
+  try {
+    await pool.query('SELECT 1');
+    res.json({ status: 'ok', database: 'connected' });
+  } catch (error) {
+    console.error('Health check failed:', error);
+    res.status(500).json({ status: 'error', database: 'disconnected' });
+  }
+});
+
+// Query endpoint
+app.post('/query', handleQuery);
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`)
-})  
+  console.log(`Server is running on port ${PORT}`);
+});
