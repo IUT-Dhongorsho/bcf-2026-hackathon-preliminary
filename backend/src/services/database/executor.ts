@@ -1,7 +1,17 @@
+import { db } from '../../database/index'
+
+export const executor = async (query: string) => {
+    try {
+        const result = await db.query(query);
+        console.log('Query executed successfully:', result);
+    } catch (error) {
+        console.error('Error executing query:', error);
+    }
+}
 import { pool } from '../../config/database.js';
 
 export async function getSchema(): Promise<string> {
-  const query = `
+    const query = `
     SELECT 
       t.table_name,
       c.column_name,
@@ -26,36 +36,36 @@ export async function getSchema(): Promise<string> {
     ORDER BY t.table_name, c.ordinal_position;
   `;
 
-  const result = await pool.query(query);
-  const map: Record<string, string[]> = {};
-  for (const row of result.rows) {
-    if (!map[row.table_name]) map[row.table_name] = [];
-    let col = `  ${row.column_name} ${row.data_type}`;
-    if (row.constraints) col += ` (${row.constraints})`;
-    map[row.table_name].push(col);
-  }
+    const result = await pool.query(query);
+    const map: Record<string, string[]> = {};
+    for (const row of result.rows) {
+        if (!map[row.table_name]) map[row.table_name] = [];
+        let col = `  ${row.column_name} ${row.data_type}`;
+        if (row.constraints) col += ` (${row.constraints})`;
+        map[row.table_name].push(col);
+    }
 
-  let str = '';
-  for (const [table, cols] of Object.entries(map)) {
-    str += `Table: ${table}\n${cols.join('\n')}\n\n`;
-  }
-  return str;
+    let str = '';
+    for (const [table, cols] of Object.entries(map)) {
+        str += `Table: ${table}\n${cols.join('\n')}\n\n`;
+    }
+    return str;
 }
 
 export async function executeSQL(sql: string): Promise<{ rows: any[]; columns: string[] }> {
-  const trimmed = sql.trim().toUpperCase();
-  if (!trimmed.startsWith('SELECT')) throw new Error('Only SELECT queries are allowed');
+    const trimmed = sql.trim().toUpperCase();
+    if (!trimmed.startsWith('SELECT')) throw new Error('Only SELECT queries are allowed');
 
-  const dangerous = ['DROP', 'DELETE', 'UPDATE', 'INSERT', 'ALTER', 'CREATE', 'TRUNCATE'];
-  for (const word of dangerous) {
-    if (trimmed.includes(word)) throw new Error(`Forbidden keyword: ${word}`);
-  }
+    const dangerous = ['DROP', 'DELETE', 'UPDATE', 'INSERT', 'ALTER', 'CREATE', 'TRUNCATE'];
+    for (const word of dangerous) {
+        if (trimmed.includes(word)) throw new Error(`Forbidden keyword: ${word}`);
+    }
 
-  const client = await pool.connect();
-  try {
-    const result = await client.query(sql);
-    return { rows: result.rows, columns: result.fields.map(f => f.name) };
-  } finally {
-    client.release();
-  }
+    const client = await pool.connect();
+    try {
+        const result = await client.query(sql);
+        return { rows: result.rows, columns: result.fields.map(f => f.name) };
+    } finally {
+        client.release();
+    }
 }
