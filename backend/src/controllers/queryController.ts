@@ -1,65 +1,34 @@
 import { Request, Response } from 'express';
-import { generateSQL } from '../services/llm/sqlGenerator.js';
 import { classifyIntent } from '../services/llm/intentClassifier.js';
-import { executeSQL } from '../services/database/executor.js';
-import { convertCurrency } from '../services/external/currency.js';
-import { geocode } from '../services/external/geocode.js';
-import { formatResponse } from '../services/response/formatter.js';
-import { resolveExternalQuery } from '../services/external/index.js';
+import { queryQueue } from '../services/queue/queryWorker.js';
 
 export const handleQuery = async (req: Request, res: Response) => {
   try {
-    const { question, llm = 'gemini-2.5-flash' } = req.body;
+    const { question, llm = 'groq-llama-3.3-70b' } = req.body;
     if (!question) return res.status(400).json({ error: 'Missing "question"' });
 
+    // 1. Classify intent (fast, no heavy processing)
     const intent = await classifyIntent(question);
-    let rows: any[], columns: string[], source: 'database' | 'external' | 'mixed';
 
-    if (intent === 'external') {
-      const result = await resolveExternalQuery(question);
-      rows = result.rows;
-      columns = result.columns;
-      source = 'external';
-    } else if (intent === 'mixed') {
-      const result = await handleMixed(question);
-      rows = result.rows;
-      columns = result.columns;
-      source = 'mixed';
-    } else {
-      const sql = await generateSQL(question);
-      const result = await executeSQL(sql);
-      rows = result.rows;
-      columns = result.columns;
-      source = 'database';
-    }
+    // 2. Add to queue for async processing
+    const job = await queryQueue.add('query', {
+      question,
+      llm,
+      intent,
+    });
 
-    const response = formatResponse({ question, llm, columns, rows, source });
-    res.json(response);
+    // 3. Wait for the job to complete (with timeout)
+    const result = await job.waitUntilFinished(
+      queryQueue, // worker instance
+      30000 // 30 second timeout
+    );
+
+    res.json(result);
   } catch (error: any) {
+    if (error.message?.includes('timeout')) {
+      return res.status(408).json({ error: 'Query timed out. Please try again.' });
+    }
+    console.error('Query error:', error);
     res.status(500).json({ error: error.message || 'Internal error' });
   }
 };
-
-
-
-// Mixed handler
-async function handleMixed(question: string) {
-  const sql = await generateSQL(question);
-  const dbResult = await executeSQL(sql);
-  const lower = question.toLowerCase();
-  let target = 'EUR';
-  if (lower.includes('gbp') || lower.includes('pound')) target = 'GBP';
-  else if (lower.includes('inr')) target = 'INR';
-  else if (lower.includes('bdt')) target = 'BDT';
-
-  const convertedRows = dbResult.rows.map((row: any[]) => {
-    const idx = row.findIndex(v => typeof v === 'number');
-    if (idx === -1) return row;
-    const converted = await convertCurrency(row[idx], 'USD', target);
-    const newRow = [...row];
-    newRow[idx] = parseFloat(converted.toFixed(2));
-    return newRow;
-  });
-
-  return { rows: convertedRows, columns: dbResult.columns };
-}

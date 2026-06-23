@@ -1,28 +1,21 @@
-import express from 'express'
-import dotenv from 'dotenv'
-import { db } from './database/index'
+import * as express from 'express';
+import * as cors from 'cors';
+import { config } from 'dotenv';
+config();
 
-dotenv.config()
+import healthRoutes from './routes/health.routes.js';
+import queryRoutes from './routes/query.routes.js';
+import { errorHandler } from './utils/errorHandler.js';
+import './services/queue/queryWorker.js'; // start the worker
 
-const app = express()
-const PORT = process.env.PORT || 3000
+const app = express();
 
-db.connect().then(() => {
-    console.log('Database connection established')
-}).catch((error) => {
-    console.error('Error connecting to the database:', error)
-})
+app.use(cors({ origin: process.env.CLIENT_URL || '*' }));
+app.use(express.json({ limit: '50mb' }));
 
-app.get('/', async (req, res) => {
-    try {
-        const result = await db.query('SELECT NOW()')
-        res.json({ message: 'Database connected!', time: result.rows[0].now })
-    } catch (error) {
-        console.error('Error connecting to the database:', error)
-        res.status(500).json({ message: 'Database connection error' })
-    }
-})
+app.use('/api', healthRoutes);
+app.use('/api', queryRoutes);
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`)
-})  
+app.use(errorHandler);
+
+export default app;
